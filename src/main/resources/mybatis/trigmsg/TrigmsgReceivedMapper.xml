@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.trigmsg.dao.TrigmsgReceivedDao">
+
+    <select id="list" resultType="com.veesing.trigmsg.domain.TrigmsgReceivedDO">
+        SELECT
+        a.id,
+        a.rec_phone,
+        a.rec_content,
+        a.rec_time,
+        a.sent_id,
+        a.customer_id,
+        a.task_id,
+        b.send_time as 'sentTime',
+        b.content as 'content',
+        c.company_name,
+        c.contact_name,
+        d.username
+        FROM
+        trigmsg_received as a
+        left join trigmsg_sent as b on a.sent_id=b.id
+        LEFT JOIN vs_customer c ON a.customer_id = c.id
+        LEFT JOIN sys_user d ON d.user_id = a.create_user_id
+        <where>
+            <if test="id != null and id != ''">and a.id = #{id}</if>
+            <if test="recPhone != null and recPhone != ''">and a.rec_phone = #{recPhone}</if>
+            <if test="recContent != null and recContent != ''">and a.rec_content = #{recContent}</if>
+            <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+                AND a.rec_time &gt;= #{starttime} and a.rec_time &lt;= #{endtime}
+            </if>
+            <if test="tplId != null and tplId != ''">and b.tpl_id = #{tplId}</if>
+            <if test="pdType != null and pdType != ''">and b.type = #{pdType}</if>
+            <if test="companyName != null and companyName != ''">and c.company_name =#{companyName}</if>
+            <if test="contactName != null and contactName != ''">and c.contact_name =#{contactName}</if>
+            <if test="sentId != null and sentId != ''">and a.sent_id = #{sentId}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="userName != null and userName != ''">and d.username = #{userName}</if>
+        </where>
+        order by rec_time desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1)
+        FROM
+        trigmsg_received a
+        left join trigmsg_sent as b on a.sent_id=b.id
+        LEFT JOIN vs_customer c ON a.customer_id = c.id
+        LEFT JOIN sys_user d ON d.user_id = a.create_user_id
+        <where>
+            <if test="id != null and id != ''">and a.id = #{id}</if>
+            <if test="recPhone != null and recPhone != ''">and a.rec_phone = #{recPhone}</if>
+            <if test="recContent != null and recContent != ''">and a.rec_content = #{recContent}</if>
+            <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+                AND a.rec_time &gt;= #{starttime} and a.rec_time &lt;= #{endtime}
+            </if>
+            <if test="tplId != null and tplId != ''">and b.tpl_id = #{tplId}</if>
+            <if test="companyName != null and companyName != ''">and c.company_name =#{companyName}</if>
+            <if test="contactName != null and contactName != ''">and c.contact_name =#{contactName}</if>
+            <if test="pdType != null and pdType != ''">and b.type = #{pdType}</if>
+            <if test="sentId != null and sentId != ''">and a.sent_id = #{sentId}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="userName != null and userName != ''">and d.username = #{userName}</if>
+        </where>
+    </select>
+
+</mapper>

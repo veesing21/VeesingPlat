@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.veesing.global.dao.GlobalSmsCodeSentDao">
+
+    <select id="list" parameterType="map" resultType="com.veesing.global.domain.GlobalSmsCodeSentDO">
+        select sc.id, sc.amount, sc.content, sc.phone, sc.send_status, sc.send_time, sc.create_time, sc.customer_id, sc.pro_id,sc.international_code,
+        sc.task_id, sc.channel_id, sc.pass_id, sc.receipt_time, sc.receipt_code, sc.receipt_status, sc.push_result,sc.cost_price,sc.remark,
+        sc.create_user_id, sc.push_time
+        from global_sms_code_sent sc
+        <where>
+            <if test="amount != null and amount != ''">and sc.amount = #{amount}</if>
+            <if test="content != null and content != ''">and sc.content = #{content}</if>
+            <if test="phone != null and phone != ''">and sc.phone = #{phone}</if>
+            <if test="sendStatus != null and sendStatus != ''">and sc.send_status = #{sendStatus}</if>
+            <if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+                AND sc.send_time &gt;= #{starttime} AND  sc.send_time &lt;= #{endtime}
+            </if>
+            <if test="customerId != null and customerId != ''">and sc.customer_id = #{customerId}</if>
+            <if test="createTime != null and createTime != ''">and sc.create_time = #{createTime}</if>
+            <if test="proId != null and proId != ''">and sc.pro_id = #{proId}</if>
+            <if test="internationalCode != null and internationalCode != ''">and sc.international_code = #{internationalCode}</if>
+            <if test="taskId != null and taskId != ''">and sc.task_id = #{taskId}</if>
+            <if test="channelId != null and channelId != ''">and sc.channel_id = #{channelId}</if>
+            <if test="passId != null and passId != ''">and sc.pass_id = #{passId}</if>
+            <if test="pushResult != null and pushResult != ''">and sc.push_result = #{pushResult}</if>
+            <if test="createUserId != null and createUserId != ''">and sc.create_user_id = #{createUserId}</if>
+            <if test="pushTime != null and pushTime != ''">and sc.push_time = #{pushTime}</if>
+            <choose>
+                <when test="receiptStatus == 3 ">
+                    and sc.receipt_status is null
+                </when>
+                <when test="receiptStatus != null and receiptStatus != ''">
+                    and sc.receipt_status = #{receiptStatus}
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <if test="receiptCode != null and receiptCode != ''"> and sc.receipt_code LIKE CONCAT ('%',#{receiptCode},'%') </if>
+        </where>
+        order by sc.send_time desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select  count(1) from  global_sms_code_sent sc
+        <where>
+            <if test="amount != null and amount != ''">and sc.amount = #{amount}</if>
+            <if test="content != null and content != ''">and sc.content = #{content}</if>
+            <if test="phone != null and phone != ''">and sc.phone = #{phone}</if>
+            <if test="sendStatus != null and sendStatus != ''">and sc.send_status = #{sendStatus}</if>
+            <if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+                AND sc.send_time &gt;= #{starttime} AND  sc.send_time &lt;= #{endtime}
+            </if>
+            <if test="customerId != null and customerId != ''">and sc.customer_id = #{customerId}</if>
+            <if test="createTime != null and createTime != ''">and sc.create_time = #{createTime}</if>
+            <if test="proId != null and proId != ''">and sc.pro_id = #{proId}</if>
+            <if test="internationalCode != null and internationalCode != ''">and sc.international_code = #{internationalCode}</if>
+            <if test="taskId != null and taskId != ''">and sc.task_id = #{taskId}</if>
+            <if test="channelId != null and channelId != ''">and sc.channel_id = #{channelId}</if>
+            <if test="passId != null and passId != ''">and sc.pass_id = #{passId}</if>
+            <if test="pushResult != null and pushResult != ''">and sc.push_result = #{pushResult}</if>
+            <if test="createUserId != null and createUserId != ''">and sc.create_user_id = #{createUserId}</if>
+            <if test="pushTime != null and pushTime != ''">and sc.push_time = #{pushTime}</if>
+            <choose>
+                <when test="receiptStatus == 3 ">
+                    and sc.receipt_status is null
+                </when>
+                <when test="receiptStatus != null and receiptStatus != ''">
+                    and sc.receipt_status = #{receiptStatus}
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <if test="receiptCode != null and receiptCode != ''"> and sc.receipt_code LIKE CONCAT ('%',#{receiptCode},'%') </if>
+        </where>
+    </select>
+
+</mapper>

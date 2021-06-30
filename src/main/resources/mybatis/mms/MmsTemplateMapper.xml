@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.mms.dao.MmsTemplateDao">
+    <select id="list" resultType="com.veesing.mms.domain.MmsTemplateDO">
+        SELECT
+        `id`,
+        `title`,
+        `createtime` as 'create_time',
+        `modifytime` as
+        'modify_time',
+        `state`,
+        `customerid` as 'customer_id',
+        `mms_type`,
+        `is_api`,
+        `screenshot`,
+        `frame_json`,
+        `size`,
+        `pd_type`,
+        `channel_id`,
+        `no_audit`
+        FROM
+        `mms_ware`
+        <where>
+            <choose>
+                <when test="id!=null and id!=''">and id=#{id}</when>
+                <when test="mmsType==null or mmsType==''">or customerid=#{customerId} or mms_type!=1</when>
+                <when test="mmsType==1">and customerid=#{customerId}</when>
+                <when test="mmsType!=1">and mms_type=#{mmsType}</when>
+            </choose>
+            <if test="pdType!=null and pdType!=''">and pd_type=#{pdType}</if>
+        </where>
+        ORDER BY id DESC
+        <if test="offset !=null and limit != null">
+            LIMIT #{offset},#{limit}
+        </if>
+    </select>
+    <select id="count" resultType="int">
+        SELECT count(1)
+        FROM
+        `mms_ware`
+        <where>
+            <choose>
+                <when test="id!=null and id!=''">and id=#{id}</when>
+                <when test="mmsType==null or mmsType==''">and customerid=#{customerId} or mms_type!=1</when>
+                <when test="mmsType==1">and customerid=#{customerId}</when>
+                <when test="mmsType!=1">and mms_type=#{mmsType}</when>
+            </choose>
+            <if test="pdType!=null and pdType!=''">and pd_type=#{pdType}</if>
+        </where>
+    </select>
+
+    <select id="get" resultType="com.veesing.mms.domain.MmsTemplateDO">
+		SELECT
+		`id`,
+		`title`,
+		`createtime` as
+		'create_time',
+		`modifytime` as
+		'modify_time',
+		`state`,
+		`customerid` as
+		'customer_id',
+		`mms_type`,
+		`is_api`,
+		`screenshot`,
+		`frame_json`,
+		`size`,
+		ip,
+		pd_type,
+		channel_id,
+		no_audit,
+		call_url
+		FROM
+		`mms_ware`
+		where id=#{id}
+	</select>
+
+</mapper>

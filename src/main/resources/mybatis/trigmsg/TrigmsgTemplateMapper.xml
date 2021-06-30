@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.trigmsg.dao.TrigmsgTemplateDao">
+	<select id="list" resultType="com.veesing.trigmsg.domain.TemplateDO">
+		SELECT
+			a.id,
+			a.customer_id,
+			a.tpl_type,
+			a.tpl_name,
+			a.tpl_content,
+			a.tpl_status,
+			a.create_time,
+			a.modify_time,
+			a.create_user_id,
+			a.remark,
+			a.opinion
+		FROM
+			`trigmsg_template` a
+		<where>
+			<if test="id != null and id != ''">and a.id = #{id} </if>
+			<if test="tplName != null and tplName != ''"> and a.tpl_name LIKE CONCAT ('%',#{tplName},'%')</if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="tplType != null and tplType != ''"> and a.tpl_type IN (#{tplType}) </if>
+			<if test="content != null and content != ''"> and a.tpl_content LIKE CONCAT('%',#{content},'%') </if>
+			<if test="status != null and status != ''"> and a.tpl_status = #{status} </if>
+			<if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+				AND a.create_time &gt;#{starttime} AND a.create_time &lt;#{endtime}
+			</if>
+			<if test="pdType != null and pdType != ''"> and a.pd_type = #{pdType} </if>
+		</where>
+		order by a.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+
+	<select id="count" resultType="int">
+		SELECT count(1)
+		FROM
+			`trigmsg_template` a
+		<where>
+			<if test="id != null and id != ''">and a.id = #{id} </if>
+			<if test="tplName != null and tplName != ''"> and a.tpl_name LIKE CONCAT ('%',#{tplName},'%')</if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="tplType != null and tplType != ''"> and a.tpl_type IN (#{tplType}) </if>
+			<if test="content != null and content != ''"> and a.tpl_content LIKE CONCAT('%',#{content},'%') </if>
+			<if test="status != null and status != ''"> and a.tpl_status = #{status} </if>
+			<if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+				AND a.create_time &gt;#{starttime} AND a.create_time &lt;#{endtime}
+			</if>
+			<if test="pdType != null and pdType != ''"> and a.pd_type = #{pdType} </if>
+		</where>
+	</select>
+
+
+	<select id="get" resultType="com.veesing.trigmsg.domain.TemplateDO">
+		SELECT
+		a.id,
+		a.customer_id,
+		a.tpl_type,
+		a.tpl_name,
+		a.tpl_content,
+		a.tpl_status,
+		a.create_time,
+		a.modify_time,
+		a.create_user_id,
+		a.remark,
+		a.opinion,
+		b.name as 'tplTypeName',
+		ip
+		FROM
+		trigmsg_template a left join sys_template_type b
+		on a.tpl_type=b.id
+		WHERE
+		a.id=#{value}
+	</select>
+
+
+
+	<select id="listTemplateTypes" resultType="com.veesing.trigmsg.domain.SysTemplateTypeDO">
+		select id,`name` from sys_template_type
+	</select>
+
+	<select id="listSysTemplates" resultType="com.veesing.trigmsg.domain.SysTemplateDO">
+		select
+		id,
+		`type_id`,
+		`tpl_name`,
+		`tpl_content`,
+		`create_time`,
+		`modify_time`,
+		`create_user_id`
+		from `sys_template`
+		<where>
+			<if test="typeId !=null and typeId!=''">and type_id=#{typeId} </if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="countSysTemplates" resultType="int">
+		select
+		count(1)
+		from sys_template
+		<where>
+			<if test="typeId !=null and typeId!=''">and type_id=#{typeId} </if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.sms.dao.SmsReplyDao">
+
+    <select id="list" resultType="com.veesing.sms.domain.SmsReplyDO">
+        SELECT
+        a.`id`,
+        a.`rec_phone`,
+        a.`rec_content`,
+        a.`rec_time`,
+        a.`sent_id`,
+        a.`customer_id`,
+        a.`task_id`,
+        a.`pre_id`,
+        a.create_user_id,
+        b.send_time AS 'sentTime',
+        b.content
+        FROM
+        sms_received a
+        LEFT JOIN sms_sent b ON a.sent_id = b.id
+        <where>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="recContent != null and recContent != ''">and a.rec_content=#{recContent}</if>
+            <if test="recPhone != null and recPhone != ''">and a.rec_phone = #{recPhone}</if>
+            <if test="starttime != null and  starttime != '' and endtime != null and sendtime != ''">
+                and a.`rec_time` &gt;= #{starttime} and a.`rec_time` &lt;=#{endtime}
+            </if>
+            <if test="sentId != null ">and a.sent_id = #{sentId}</if>
+            <if test="taskId != null and taskId != ''">and a.task_id = #{taskId}</if>
+            <if test="preId != null and preId != ''">and a.pre_id = #{preId}</if>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <if test="content != null and content != ''">and b.content=#{content}</if>
+        </where>
+        order by a.id desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1)
+        FROM
+        sms_received AS a
+        LEFT JOIN sms_sent AS b ON a.sent_id = b.id
+        <where>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="recContent != null and recContent != ''">and a.rec_content=#{recContent}</if>
+            <if test="recPhone != null and recPhone != ''">and a.rec_phone = #{recPhone}</if>
+            <if test="starttime != null and  starttime != '' and endtime != null and sendtime != ''">
+                and a.`rec_time` &gt;= #{starttime} and a.`rec_time` &lt;=#{endtime}
+            </if>
+            <if test="sentId != null ">and a.sent_id = #{sentId}</if>
+            <if test="taskId != null and taskId != ''">and a.task_id = #{taskId}</if>
+            <if test="preId != null and preId != ''">and a.pre_id = #{preId}</if>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <if test="content != null and content != ''">and b.content=#{content}</if>
+        </where>
+    </select>
+
+</mapper>

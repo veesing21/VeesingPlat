@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.sms.dao.CustomTemplateDao">
+
+	<select id="get" resultType="com.veesing.sms.domain.CustomTemplateDO">
+		SELECT
+		a.id,
+		a.customer_id,
+		a.tpl_type,
+		a.tpl_name,
+		a.tpl_content,
+		a.tpl_status,
+		a.create_time,
+		a.modify_time,
+		a.create_user_id,
+		a.remark,
+		a.opinion,
+		b.name as 'tplTypeName',
+		a.ip,
+		a.channel_id,
+		a.no_audit
+		FROM
+		`sms_custom_template` a left join sys_template_type b on a.tpl_type=b.id
+		WHERE a.id=#{value}
+	</select>
+
+	<select id="list" resultType="com.veesing.sms.domain.CustomTemplateDO">
+		SELECT
+		a.id,
+		a.customer_id,
+		a.tpl_type,
+		a.tpl_name,
+		a.tpl_content,
+		a.tpl_status,
+		a.create_time,
+		a.modify_time,
+		a.create_user_id,
+		a.remark,
+		a.opinion,
+        a.ip,
+        a.channel_id,
+        a.no_audit,
+		b.name as 'tplTypeName'
+		FROM
+		`sms_custom_template` a left join sys_template_type b on a.tpl_type=b.id
+		<where>
+			<if test="id != null and id != ''"> and a.id = #{id} </if>
+			<if test="tplType != null and tplType != ''"> and a.tpl_type = #{tplType} </if>
+			<if test="tplName != null and tplName != ''"> and a.tpl_name  LIKE CONCAT ('%',#{tplName},'%')</if>
+			<if test="tplContent != null and tplContent != ''"> and a.tpl_content LIKE CONCAT ('%', #{tplContent},'%') </if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="tplStatus != null and tplStatus != ''"> and a.tpl_status = #{tplStatus} </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+			AND a.create_time &gt;=  #{starttime} and a.create_time &lt;= #{endtime}</if>
+			<if test="modifyTime != null and modifyTime != ''"> and a.modify_time = #{modifyTime} </if>
+			<if test="createUserId != null and createUserId != ''"> and a.create_user_id = #{createUserId} </if>
+			<if test="remark != null and remark != ''"> and a.remark = #{remark} </if>
+			<if test="opinion != null and opinion != ''"> and a.opinion = #{opinion} </if>
+			<if test="ip != null and ip != ''"> and a.ip = #{ip} </if>
+			<if test="smsId != null and smsId != ''"> and a.sms_id = #{smsId} </if>
+		</where>
+		order by a.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1)
+		FROM
+		`sms_custom_template`
+		<where>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+			<if test="tplType != null and tplType != ''"> and tpl_type = #{tplType} </if>
+			<if test="tplName != null and tplName != ''"> and tpl_name LIKE CONCAT ('%',#{tplName},'%')</if>
+			<if test="tplContent != null and tplContent != ''"> and tpl_content LIKE CONCAT ('%', #{tplContent},'%') </if>
+			<if test="customerId != null and customerId != ''"> and customer_id = #{customerId} </if>
+			<if test="tplStatus != null and tplStatus != ''"> and tpl_status = #{tplStatus} </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+			AND create_time &gt;=  #{starttime} and create_time &lt;= #{endtime}</if>
+			<if test="modifyTime != null and modifyTime != ''"> and modify_time = #{modifyTime} </if>
+			<if test="createUserId != null and createUserId != ''"> and create_user_id = #{createUserId} </if>
+			<if test="remark != null and remark != ''"> and remark = #{remark} </if>
+            <if test="ip != null and ip != ''"> and ip = #{ip} </if>
+            <if test="opinion != null and opinion != ''"> and opinion = #{opinion} </if>
+			<if test="smsId != null and smsId != ''"> and sms_id = #{smsId} </if>
+		</where>
+	</select>
+
+	<select id="listTemplateTypes" resultType="com.veesing.trigmsg.domain.SysTemplateTypeDO">
+		select id,`name` from sys_template_type
+	</select>
+
+</mapper>

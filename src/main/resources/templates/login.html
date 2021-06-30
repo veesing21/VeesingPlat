@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>短彩信平台注册/登录</title>
+    <meta name="keywords" content="短信平台,彩信平台,短信平台注册,彩信平台注册,短信平台登录,彩信平台登录">
+    <meta name="description"
+          content="短彩信注册/登录平台，在线通过手机号码注册及试用该短彩信平台功能以及服务，平台主要功能：短信验证码接入、语音验证码接入、群发彩信、群发彩信，以及数据统计等。">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/static/login/img/favicon-20191127072707974.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.15.1/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/static/login/css/account.css?t=20191106">
+    <style>
+   	 	html{background-color: #F1F4F5;}
+        body #newBridge, body #newBridge * {
+            display: none !important;
+            opacity: 0;
+            position: absolute;
+            z-index: -10;
+        }
+        #app{
+            overflow-y: hidden;
+            min-height: 100%;
+            position: relative;
+        }
+        .container{
+            margin-top:100px;
+        }
+        .header .topbar-top{
+            height: 70px;
+            line-height: 70px;
+        }
+        .header .topbar-top .logo{
+            height: 70px;
+            font-size: 20px;
+        }
+        .header .topbar-top .vip a{
+            height: 70px;
+        }
+    </style>
+    <script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b920da81f331831cb27fd3234390f455";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</head>
+<body style="zoom: 0.9;">
+<div id="app">
+    <template>
+        <header class="header">
+            <div class="topbar-top">
+                <div class="w1200 c">
+                    <a class="logo" href="/">云通讯平台</a>
+                    <div class="vip fr">
+                        <font></font>
+                        <a class="cp" @click="action = 1">登录</a>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="w1200" style="width:700px;">
+                <div class="left">
+                    <form v-if="action == 1" class="form form-login" @submit.prevent="login()">
+                        <div class="title">
+                            账号登录 <span class="fr cp noselect" @click="action = 2">注册</span>
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-tel"></i>
+                            <input type="text" class="input-inner" maxlength="11" autocomplete="off" required
+                                   v-model="loginData.username"
+                                   placeholder="手机号">
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-password"></i>
+                            <input type="password" class="input-inner" autocomplete="off" required
+                                   v-model="loginData.password"
+                                   placeholder="登录密码">
+                        </div>
+                        <div class="input-pcode" v-if="loginNum>3">
+                            <div class="input">
+                                <i class="icon icon-code"></i>
+                                <input type="text" class="input-inner" autocomplete="off" required maxlength="4"
+                                       v-model="loginData.pcode"
+                                       placeholder="输入验证码">
+                            </div>
+                            <span class="noselect">
+                                <img id="imgObj" alt="验证码" src="/register/photocode" @click="changeImg()"/>
+                                <a class="cp" @click="changeImg()">换一张</a>
+                            </span>
+                        </div>
+
+                        <div class="check-agreement noselect">
+                            <label class="cp">
+                                <input class="agreement-input" type="checkbox" v-model="remember">
+                                <span></span>
+                                记住密码
+                            </label>
+
+                        </div>
+
+                        <button class="next-btn cp" type="submit">立即登录</button>
+                    </form>
+
+
+
+                    <form v-if="action == 3" class="form form-register" @submit.prevent="resetPwdFn()" style="zoom: 0.9;">
+                        <div class="title">
+                            忘记密码 <span class="fr cp noselect" @click="action = 1">登录</span>
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-tel"></i>
+                            <input type="text" class="input-inner" maxlength="11" autocomplete="off" required
+                                   v-model="resetPwd.username"
+                                   placeholder="手机号">
+                        </div>
+                        <div class="input-pcode">
+                            <div class="input">
+                                <i class="icon icon-code"></i>
+                                <input type="text" class="input-inner" autocomplete="off" required maxlength="4"
+                                       v-model.trim="resetPwd.pcode"
+                                       placeholder="输入验证码">
+                            </div>
+                            <span class="noselect">
+                                <img id="imgObj" alt="验证码" src="/register/photocode" @click="changeImg()"/>
+                                <a class="cp" @click="changeImg()">换一张</a>
+                            </span>
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-code"></i>
+                            <input type="text" class="input-inner" autocomplete="off" required maxlength="6"
+                                   v-model="resetPwd.verifycode"
+                                   placeholder="输入验证码">
+                            <a v-if="showGetCode2" @click="getCode(resetPwd.username,true)" class="get-code cp noselect"><span>|</span> <img
+                                    src="/static/static/login/img/get.png"> <font class="color">获取验证码</font></a>
+                            <a v-else class="get-code disabled"><span>|</span> 重发({{ count2 }} s)</a>
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-password"></i>
+                            <input type="password" class="input-inner" autocomplete="off" required
+                                   v-model="resetPwd.password"
+                                   placeholder="请输入新密码">
+                        </div>
+                        <div class="input">
+                            <i class="icon icon-password"></i>
+                            <input type="password" class="input-inner" autocomplete="off" required
+                                   v-model="resetPwd.rePassword"
+                                   placeholder="请再次确认密码">
+                        </div>
+
+                        <button class="next-btn cp" type="submit">确认修改</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </template>
+</div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/element-ui@2.15.1/lib/index.js"></script>
+<script type="text/javascript" src="/static/login/js/account.min.js?t=20200129"></script>
+</body>
+</html>

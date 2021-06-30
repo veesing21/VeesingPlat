@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.global.dao.GlobalSmsCodeReceivedDao">
+
+	<select id="list" resultType="com.veesing.global.domain.GlobalSmsCodeReceivedDO">
+		SELECT
+			a.`id`,
+			a.`rec_phone`,
+			a.`rec_content`,
+			a.`rec_time`,
+			a.`sent_id`,
+			a.`customer_id`,
+			a.`task_id`,
+            a.international_code,
+            a.chinese_name,
+			a.create_user_id,
+			b.send_time AS 'sentTime',
+			b.content,
+			c.company_name,
+			c.contact_name,
+			f.username,
+			c.telephone
+		FROM
+			global_sms_code_received AS a
+		LEFT JOIN global_sms_code_sent AS b ON a.sent_id = b.id
+		LEFT JOIN vs_customer c ON a.customer_id = c.id
+		LEFT JOIN sys_user f ON a.create_user_id = f.user_id
+		<where>
+			<if test="recContent != null and recContent != ''"> and a.rec_content LIKE CONCAT (#{recContent},'%')</if>
+			<if test="recPhone != null and recPhone != ''"> and a.rec_phone = #{recPhone} </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and sendtime != ''">
+                and   a.rec_time &gt;= #{starttime} and a.rec_time &lt;=#{endtime}
+			</if>
+			<if test="sentId != null "> and a.sent_id = #{sentId} </if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="internationalCode != null and internationalCode != ''"> and  a.international_code = #{internationalCode} </if>
+			<if test="chineseName != null and chineseName != ''"> and a.chinese_name= #{chineseName} </if>
+			<if test="taskId != null and taskId != ''"> and a.task_id = #{taskId} </if>
+			<if test="content != null and content != ''"> and b.content LIKE CONCAT (#{content},'%')</if>
+			<if test="companyName !=null and companyName!=''">and c.company_name LIKE CONCAT (#{companyName},'%')</if>
+			<if test="contactName !=null and contactName!=''">and c.contact_name LIKE CONCAT (#{contactName},'%')</if>
+			<if test="userName !=null and userName!=''">and f.username LIKE CONCAT (#{userName},'%')</if>
+		</where>
+		order by id desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1)
+		FROM
+		global_sms_code_received AS a
+		LEFT JOIN global_sms_code_sent AS b ON a.sent_id = b.id
+		LEFT JOIN vs_customer c ON a.customer_id = c.id
+		LEFT JOIN sys_user f ON a.create_user_id = f.user_id
+		<where>
+			<if test="recContent != null and recContent != ''"> and a.rec_content LIKE CONCAT (#{recContent},'%')</if>
+			<if test="recPhone != null and recPhone != ''"> and a.rec_phone = #{recPhone} </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and sendtime != ''">
+                and   a.`rec_time` &gt;= #{starttime} and a.`rec_time` &lt;=#{endtime}
+			</if>
+			<if test="sentId != null "> and a.sent_id = #{sentId} </if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="taskId != null and taskId != ''"> and a.task_id = #{taskId} </if>
+            <if test="internationalCode != null and internationalCode != ''"> and  a.international_code = #{internationalCode} </if>
+            <if test="chineseName != null and chineseName != ''"> and a.chinese_name= #{chineseName} </if>
+			<if test="content != null and content != ''"> and b.content LIKE CONCAT (#{content},'%')</if>
+			<if test="companyName !=null and companyName!=''">and c.company_name LIKE CONCAT (#{companyName},'%')</if>
+			<if test="contactName !=null and contactName!=''">and c.contact_name LIKE CONCAT (#{contactName},'%')</if>
+			<if test="userName !=null and userName!=''">and f.username LIKE CONCAT (#{userName},'%')</if>
+		</where>
+	</select>
+
+</mapper>

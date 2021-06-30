@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.sms.dao.SmsBatchDao">
+	<select id="list" resultType="com.veesing.sms.domain.SmsBatchDO">
+		SELECT
+		a.id,
+		a.customer_id,
+		a.cer_status,
+		a.opinion,
+		a.content,
+		a.content_length,
+		a.content_size,
+		a.job_time,
+		a.is_loop,
+		a.sub_time,
+		a.send_time,
+		a.phone_num,
+		a.cost_num,
+		a.create_time,
+		a.create_user_id,
+		a.task_id,
+		a.type,
+		a.pro_id,
+		a.send_status,
+		a.shield_json,
+		a.is_api,
+		a.ip,
+		a.channel_id,
+		a.opinion,
+		a.remark,
+		a.identify_time
+		FROM
+		`sms_batch` a
+		<where>
+			<if test="id != null and id != ''"> and a.id = #{id} </if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="content != null and content != ''"> and a.content LIKE CONCAT ('%',#{content},'%') </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+				and a.create_time BETWEEN #{starttime} AND #{endtime}
+			</if>
+			<if test="pdType != null and pdType != ''"> and a.type = #{pdType} </if>
+			<if test="createUserId != null and createUserId != ''"> and a.create_user_id = #{createUserId} </if>
+			<if test="cerStatus != null and cerStatus != ''"> and a.cer_status = #{cerStatus} </if>
+			<if test="proId != null and proId != ''"> and a.pro_id = #{proId} </if>
+			<if test="taskId != null and taskId != ''"> and a.task_id = #{taskId} </if>
+			<if test="channelId != null and channelId != ''"> and a.channel_id = #{channelId} </if>
+			<if test="sendStatus != null and sendStatus != ''"> and a.send_status = #{sendStatus} </if>
+			<if test="customerIds!=null">
+				and a.customer_id in
+				<foreach collection="customerIds" item="id" index="index"
+					open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+		order by a.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1)
+		FROM
+		`sms_batch` a
+		<where>
+			<if test="id != null and id != ''"> and a.id = #{id} </if>
+			<if test="customerId != null and customerId != ''"> and a.customer_id = #{customerId} </if>
+			<if test="content != null and content != ''"> and a.content LIKE CONCAT ('%',#{content},'%') </if>
+			<if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+				and a.create_time BETWEEN #{starttime} AND #{endtime}
+			</if>
+			<if test="pdType != null and pdType != ''"> and a.type = #{pdType} </if>
+			<if test="createUserId != null and createUserId != ''"> and a.create_user_id = #{createUserId} </if>
+			<if test="cerStatus != null and cerStatus != ''"> and a.cer_status = #{cerStatus} </if>
+			<if test="proId != null and proId != ''"> and a.pro_id = #{proId} </if>
+			<if test="taskId != null and taskId != ''"> and a.task_id = #{taskId} </if>
+			<if test="channelId != null and channelId != ''"> and a.channel_id = #{channelId} </if>
+			<if test="sendStatus != null and sendStatus != ''"> and a.send_status = #{sendStatus} </if>
+			<if test="customerIds!=null">
+				and a.customer_id in
+				<foreach collection="customerIds" item="id" index="index"
+					open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="get" resultType="com.veesing.sms.domain.SmsBatchDO">
+		SELECT
+		id,
+		customer_id,
+		cer_status,
+		opinion,
+		phones,
+		content,
+		content_length,
+		content_size,
+		job_time,
+		is_loop,
+		sub_time,
+		send_time,
+		phone_num,
+		cost_num,
+		create_time,
+		create_user_id,
+		task_id,
+		`type`,
+		pro_id,
+		send_status,
+		channel_id,
+		ip,
+		is_api
+		FROM
+		`sms_batch`
+		WHERE
+		id=#{id}
+	</select>
+
+</mapper>

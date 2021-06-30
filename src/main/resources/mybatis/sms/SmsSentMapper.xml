@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.sms.dao.SmsSentDao">
+
+    <select id="getPhoneByWeek" resultType="String">
+        SELECT
+            phone,
+            count(phone)
+            as 'total'
+        FROM sms_sent
+        WHERE
+            customer_id = #{customerId}
+          AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= send_time
+        group by phone
+        having total &gt;= #{num}
+    </select>
+
+
+    <select id="list" resultType="com.veesing.sms.domain.SmsSentDO">
+        SELECT
+        a.id,
+        a.type,
+        a.phone,
+        a.send_time,
+        a.send_status,
+        a.pro_id,
+        a.content,
+        a.customer_id,
+        a.receipt_time,
+        a.receipt_code,
+        a.receipt_status,
+        a.pre_id,
+        a.content_length,
+        a.content_size,
+        a.is_api,
+        a.channel_id,
+        a.pass_id,
+        a.province_city,
+        a.push_time,
+        a.push_result,
+        a.num_section
+        FROM
+        sms_sent a
+        <where>
+            <choose>
+                <when test="preId != null and preId != ''">
+                    and a.pre_id = #{preId}
+                </when>
+                <otherwise>
+                    <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">and
+                        a.send_time &gt;= #{starttime} and a.send_time &lt; #{endtime}
+                    </if>
+                    <if test="channelId != null and channelId != ''">and a.channel_id = #{channelId}</if>
+                    <if test="passId != null and passId != ''">and a.pass_id = #{passId}</if>
+                </otherwise>
+            </choose>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <if test="content != null and content != ''">and a.content LIKE CONCAT('%',#{content},'%')</if>
+            <if test="phone != null and phone != ''">and a.phone = #{phone}</if>
+            <if test="sendStatus != null and sendStatus != ''">and a.send_status = #{sendStatus}</if>
+            <if test="receiptStatus != null and receiptStatus != ''">and a.receipt_status = #{receiptStatus}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="numSection != null and numSection != ''">and a.num_section = #{numSection}</if>
+        </where>
+        <choose>
+            <when test="preId == null or preId == ''">
+                order by a.send_time desc
+            </when>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1)
+        FROM
+        sms_sent a
+        <where>
+            <choose>
+                <when test="preId != null and preId != ''">
+                    and a.pre_id = #{preId}
+                </when>
+                <otherwise>
+                    <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">and
+                        a.send_time &gt;= #{starttime} and a.send_time &lt; #{endtime}
+                    </if>
+                    <if test="channelId != null and channelId != ''">and a.channel_id = #{channelId}</if>
+                    <if test="passId != null and passId != ''">and a.pass_id = #{passId}</if>
+                </otherwise>
+            </choose>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <if test="content != null and content != ''">and a.content LIKE CONCAT('%',#{content},'%')</if>
+            <if test="phone != null and phone != ''">and a.phone = #{phone}</if>
+            <if test="sendStatus != null and sendStatus != ''">and a.send_status = #{sendStatus}</if>
+            <if test="receiptStatus != null and receiptStatus != ''">and a.receipt_status = #{receiptStatus}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+            <if test="numSection != null and numSection != ''">and a.num_section = #{numSection}</if>
+        </where>
+    </select>
+
+</mapper>

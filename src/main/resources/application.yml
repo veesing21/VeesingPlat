@@ -1,0 +1,22 @@
+veesing:
+  uploadPath: /var/uploaded_files/
+spring:
+  thymeleaf:
+    mode: HTML
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.0:3306/veesing_sms_open?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+  mapper-locations: mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.veesing.**.domain
+

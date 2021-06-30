@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.mms.dao.MmsBatchDao">
+    <select id="list" resultType="com.veesing.mms.domain.MmsBatchDO">
+        SELECT
+		`id`,
+		`numbers`,
+		`ware_id`,
+		`customer_id`,
+		`channel_id`,
+		`state`,
+		`send_state`,
+		`sendtime`,
+		`createtime`,
+		`opnition`,
+		`remark`,
+		`frame_json`,
+		`title`,
+		`pro_id`,
+		`identify_user_id`,
+		`identify_time`,
+		`submit_time`,
+		`ip`,
+		`pd_type`,
+		`is_api`,
+		`job_time`,
+		`black_filter`
+		FROM
+        mms_batch
+        <where>
+            <choose>
+                <when test="id!=null and id!=''">
+                    id=#{id}
+                </when>
+                <otherwise>
+                    <if test="title !=null and title!=''">AND `title` LIKE CONCAT ('%',#{title},'%')</if>
+                    <if test="state !=null and state!=''">AND `state` = #{state}</if>
+                    <if test="sendState !=null and sendState!=''">AND `send_state` = #{sendState}</if>
+                    <if test="pdType !=null and pdType!=''">AND `pd_type` = #{pdType}</if>
+                    <if test="channelId !=null and channelId!=''">AND `channel_id` = #{channelId}</if>
+                    <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+                        AND `createtime` BETWEEN #{starttime} AND #{endtime}
+                    </if>
+                </otherwise>
+            </choose>
+			<if test="customerId!=null and customerId!=''">AND `customer_id` = #{customerId}</if>
+        </where>
+        ORDER BY createtime DESC
+        <if test="offset != null and limit != null ">limit #{offset},#{limit}</if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1)
+        FROM mms_batch
+        <where>
+			<choose>
+				<when test="id!=null and id!=''">
+					id=#{id}
+				</when>
+				<otherwise>
+					<if test="title !=null and title!=''">AND `title` LIKE CONCAT ('%',#{title},'%')</if>
+					<if test="state !=null and state!=''">AND `state` = #{state}</if>
+					<if test="sendState !=null and sendState!=''">AND `send_state` = #{sendState}</if>
+					<if test="pdType !=null and pdType!=''">AND `pd_type` = #{pdType}</if>
+					<if test="channelId !=null and channelId!=''">AND `channel_id` = #{channelId}</if>
+					<if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">
+						AND createtime BETWEEN #{starttime} AND #{endtime}
+					</if>
+				</otherwise>
+			</choose>
+			<if test="customerId!=null and customerId!=''">AND customer_id = #{customerId}</if>
+        </where>
+    </select>
+
+    <select id="get" resultType="com.veesing.mms.domain.MmsBatchDO">
+		SELECT
+		`id`,
+		`phone`,
+		`numbers`,
+		`ware_id`,
+		`customer_id`,
+		`channel_id`,
+		`thread_id`,
+		`state`,
+		`send_state`,
+		`sendtime`,
+		`createtime`,
+		`submit_time`,
+		`modifytime`,
+		`opnition`,
+		`remark`,
+		`frame_json`,
+		`title`,
+		`mms_size`,
+		`mms_code`,
+		`extend`,
+		`pd_type`,
+		`pro_id`,
+		`create_user_id`,
+		`ip`,
+		`is_api`,
+		`job_time`,
+		`black_filter`
+		FROM
+		`mms_batch`
+		WHERE id=#{id}
+	</select>
+
+</mapper>

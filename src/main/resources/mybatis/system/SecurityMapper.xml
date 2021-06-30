@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.veesing.system.dao.SecurityDao">
+
+	<select id="list" resultType="com.veesing.system.domain.SecurityDO">
+		select
+		`id`, `type`, `pd_type`, `key`, IFNULL(`value`,'未设置') as value, `customer_id`, `create_time`, `is_used`, `trig_time`, `trig_count`
+		from sys_security
+		<where>
+		customer_id=#{customerId} and
+			pd_type in (0,#{pdType});
+		</where>
+
+	</select>
+
+</mapper>

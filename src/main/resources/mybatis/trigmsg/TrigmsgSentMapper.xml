@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.trigmsg.dao.TrigmsgSentDao">
+
+    <select id="list" resultType="com.veesing.trigmsg.domain.TrigmsgSentDO">
+        SELECT
+        a.id,
+        a.customer_id,
+        a.type,
+        a.phone,
+        a.send_time,
+        a.send_status,
+        a.content,
+        a.receipt_time,
+        a.receipt_status,
+        a.receipt_code,
+        a.content_length,
+        a.content_size,
+        a.channel_id,
+        a.pass_id,
+        a.talk_time,
+        a.push_time,
+        a.push_result,
+        a.remark,
+        a.num_section,
+        a.province_city,
+        a.ip,
+        a.tpl_id,
+        a.variable
+        FROM
+        `trigmsg_sent` a
+        <where>
+            <if test="id != null and id != ''">and a.id = #{id}</if>
+            <if test="phone != null and phone != ''">and a.phone = #{phone}</if>
+            <if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+                AND a.send_time &gt;= #{starttime} and a.send_time &lt;=#{endtime}
+            </if>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <if test="content != null and content != ''">and a.content = #{content}</if>
+            <choose>
+                <when test="sendStatus != null and sendStatus != ''">and a.send_status = #{sendStatus}</when>
+                <otherwise>and (a.send_status=0 or a.send_status=1)</otherwise>
+            </choose>
+            <if test="tplId != null and tplId != ''">and a.tpl_id = #{tplId}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id= #{customerId}</if>
+            <if test="passId != null and passId != ''">and a.pass_id =#{passId}</if>
+            <choose>
+                <when test="receiptStatus == 3 ">
+                    and a.receipt_status is null
+                </when>
+                <when test="receiptStatus != null and receiptStatus != ''">
+                    and a.receipt_status = #{receiptStatus}
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <if test="receiptCode != null and receiptCode != ''">and a.receipt_code =#{receiptCode}</if>
+        </where>
+        order by a.id desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT
+        count(1)
+        FROM trigmsg_sent a
+        <where>
+            <if test="id != null and id != ''">and a.id = #{id}</if>
+            <if test="phone != null and phone != ''">and a.phone = #{phone}</if>
+            <if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+                AND a.send_time &gt;= #{starttime} and a.send_time&lt;=#{endtime}
+            </if>
+            <if test="pdType != null and pdType != ''">and a.type = #{pdType}</if>
+            <choose>
+                <when test="sendStatus != null and sendStatus != ''">and a.send_status = #{sendStatus}</when>
+                <otherwise>and (a.send_status=0 or a.send_status=1)</otherwise>
+            </choose>
+            <if test="content != null and content != ''">and a.content = #{content}</if>
+            <if test="tplId != null and tplId != ''">and a.tpl_id = #{tplId}</if>
+            <if test="receiptStatus != null and receiptStatus != ''">and a.receipt_status = #{receiptStatus}</if>
+            <if test="customerId != null and customerId != ''">and a.customer_id= #{customerId}</if>
+            <if test="passId != null and passId != ''">and a.pass_id =#{passId}</if>
+            <choose>
+                <when test="receiptStatus == 3 ">
+                    and a.receipt_status is null
+                </when>
+                <when test="receiptStatus != null and receiptStatus != ''">
+                    and a.receipt_status = #{receiptStatus}
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <if test="receiptCode != null and receiptCode != ''">and a.receipt_code =#{receiptCode}</if>
+        </where>
+    </select>
+
+</mapper>

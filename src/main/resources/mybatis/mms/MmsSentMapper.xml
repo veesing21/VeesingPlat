@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.mms.dao.MmsSentDao">
+    <select id="list" resultType="com.veesing.mms.domain.MmsSentDO">
+        select
+        id,
+        send_status,
+        phone,
+        batch_id,
+        send_time,
+        customer_id,
+        receipt_status,
+        receipt_time,
+        receipt_code,
+        channel_id,
+        pass_id,
+        province_city,
+        num_section,
+        pd_type,
+        is_api,
+        push_time,
+        push_result,
+        title
+        FROM
+        `mms_sent`
+        <where>
+            <choose>
+                <when test="batchId != null and batchId != ''">
+                    and batch_id = #{batchId}
+                </when>
+                <otherwise>
+                    <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">and
+                        send_time &gt;= #{starttime} and send_time &lt; #{endtime}
+                    </if>
+                    <if test="channelId != null and channelId != ''">and channel_id = #{channelId}</if>
+                    <if test="passId != null and passId != ''">and pass_id = #{passId}</if>
+                </otherwise>
+            </choose>
+            <if test="sendStatus != null and sendStatus != ''">and send_status = #{sendStatus}</if>
+            <if test="pdType != null and pdType != ''">and pd_type = #{pdType}</if>
+            <if test="numSection != null and numSection != ''">and num_section = #{numSection}</if>
+            <if test="phone != null and phone != ''">AND phone = #{phone}</if>
+            <if test="customerId != null and customerId != ''">AND customer_id = #{customerId}</if>
+            <if test="receiptStatus != null and receiptStatus != ''">AND receipt_status = #{receiptStatus}</if>
+            <if test="title !=null and title != ''">and title LIKE CONCAT('%',#{title},'%')</if>
+        </where>
+        ORDER BY `send_time` DESC
+        <if test="offset != null and limit != null ">limit #{offset},#{limit}</if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        mms_sent
+        <where>
+            <choose>
+                <when test="batchId != null and batchId != ''">
+                    and batch_id = #{batchId}
+                </when>
+                <otherwise>
+                    <if test="starttime != null and  starttime != '' and endtime != null and endtime != ''">and
+                        send_time &gt;= #{starttime} and send_time &lt; #{endtime}
+                    </if>
+                    <if test="channelId != null and channelId != ''">and channel_id = #{channelId}</if>
+                    <if test="passId != null and passId != ''">and pass_id = #{passId}</if>
+                </otherwise>
+            </choose>
+            <if test="sendStatus != null and sendStatus != ''">and send_status = #{sendStatus}</if>
+            <if test="pdType != null and pdType != ''">and pd_type = #{pdType}</if>
+            <if test="numSection != null and numSection != ''">and num_section = #{numSection}</if>
+            <if test="phone != null and phone != ''">AND phone = #{phone}</if>
+            <if test="customerId != null and customerId != ''">AND customer_id = #{customerId}</if>
+            <if test="receiptStatus != null and receiptStatus != ''">AND receipt_status = #{receiptStatus}</if>
+            <if test="title !=null and title != ''">and title LIKE CONCAT('%',#{title},'%')</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.veesing.customer.dao.CustomerDao">
+
+    <select id="get" resultType="com.veesing.customer.domain.CustomerDO">
+		SELECT
+		a.id,
+		a.customer_no,
+		a.company_name,
+		a.contact_name,
+		a.telephone,
+		a.customer_type,
+		a.parent_id,
+		a.address,
+		a.status,
+		a.is_used,
+		a.logo,
+		a.license,
+		a.create_time,
+		a.modify_time,
+		a.identify_time,
+		a.parent_name,
+		a.create_user_id,
+		a.init_user,
+		a.app_id,
+		a.app_key,
+		a.cid,
+		a.category,
+		a.customer_level,
+		a.need_examine,
+		a.lower_examine_num,
+		a.higher_examine_num,
+		a.need_white,
+		a.need_collect_white,
+		a.low_white_num,
+		a.resend_white_num,
+		a.need_shield,
+		a.ip_check,
+		a.ip_list,
+		a.industry_id,
+		a.cus_remark,
+		a.extra_config
+		FROM
+		sys_customer a
+		WHERE
+		a.id = #{value}
+	</select>
+
+</mapper>

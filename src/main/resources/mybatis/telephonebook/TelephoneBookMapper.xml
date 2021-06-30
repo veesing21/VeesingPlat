@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.veesing.telbook.dao.TelephoneBookDao">
+
+	<select id="listGroups" resultType="com.veesing.telbook.domain.TelephoneBookGroupDO">
+		SELECT
+		a.id,
+		a.group_name,
+		a.customer_id,
+		a.create_time,
+		a.remark,
+		count(b.id) as phoneNums
+		FROM
+		telephone_book_group a LEFT JOIN telephone_book b on a.id=b.group_id
+		<where>
+			<if test="id != null and id != ''"> and a.id = #{id} </if>
+			<if test="customerId != null and customerId != ''">and a.customer_id = #{customerId}</if>
+			<if test="groupName != null and groupName != ''"> and a.group_name LIKE CONCAT('%',#{groupName},'%') </if>
+			<if test="customerId != null and customerId!=''"> and a.customer_id = #{customerId} </if>
+			<if test="starttime != null and starttime != '' and endtime != null and endtime != ''">AND  a.create_time &gt;
+				#{starttime} AND  a.create_time &lt; #{endtime}
+			</if>
+			<if test="remark != null and remark != ''"> and a.remark = #{remark} </if>
+		</where>
+		group by a.id
+		<choose>
+			<when test="sort != null and sort.trim() != ''">
+				order by ${sort} ${order}
+			</when>
+			<otherwise>
+				order by a.create_time desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="countGroups" resultType="int">
+		select count(*)
+		FROM
+		telephone_book_group
+		<where>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+			<if test="customerId != null and customerId != ''">and customer_id = #{customerId}</if>
+			<if test="groupName != null and groupName != ''"> and group_name LIKE CONCAT('%',#{groupName},'%') </if>
+			<if test="customerId != null and customerId!=''"> and customer_id = #{customerId} </if>
+			<if test="starttime != null and starttime != '' and endtime != null and endtime != ''">AND  create_time &gt;
+				#{starttime} AND  create_time &lt; #{endtime}
+			</if>
+			<if test="remark != null and remark != ''"> and remark = #{remark} </if>
+		</where>
+	</select>
+
+	<select id="listPhones" resultType="com.veesing.telbook.domain.TelephoneBookDO">
+		SELECT
+		a.id,
+		a.group_id,
+		a.create_time,
+		a.telephone,
+        a.company_name,
+        a.email,
+        a.`contact_name`,
+		b.group_name
+		FROM
+		telephone_book  a Left JOIN telephone_book_group b ON a.group_id=b.id
+		<where>
+			<if test="id != null and id != ''"> a.id = #{id} </if>
+			<if test="groupId != null and groupId != ''"> and a.group_id = #{groupId} </if>
+            <if test="customerId != null and customerId!=''"> and a.customer_id = #{customerId} </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and create_time &gt;= #{startTime} and a.create_time &lt;= #{endTime}
+            </if>
+			<if test="telephone != null and telephone != ''"> and a.telephone = #{telephone} </if>
+            <if test="name != null and name != ''"> and a.name = #{name} </if>
+		</where>
+		<choose>
+			<when test="sort != null and sort.trim() != ''">
+				order by ${sort} ${order}
+			</when>
+			<otherwise>
+				order by a.create_time desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="listPhoneCount" resultType="int">
+     SELECT  count(1)  FROM  telephone_book  a Left JOIN telephone_book_group b ON a.group_id=b.id
+        <where>
+            <if test="id != null and id != ''"> a.id = #{id} </if>
+            <if test="groupId != null and groupId != ''"> and a.group_id = #{groupId} </if>
+            <if test="customerId != null and customerId!=''"> and a.customer_id = #{customerId} </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and create_time &gt;= #{startTime} and a.create_time &lt;= #{endTime}
+            </if>
+            <if test="telephone != null and telephone != ''"> and a.telephone = #{telephone} </if>
+            <if test="name != null and name != ''"> and a.name = #{name} </if>
+        </where>
+    </select>
+
+	<select id="countPhones" resultType="int">
+		select count(1)
+		FROM
+		telephone_book
+		<where>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="customerId != null and customerId !=''"> and customer_id = #{customerId} </if>
+			<if test="groupId != null and groupId != ''"> and group_id = #{groupId} </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                and create_time &gt;= #{startTime} and create_time &lt;= #{endTime}
+            </if>
+			<if test="telephone != null and telephone != ''"> and telephone = #{telephone} </if>
+		</where>
+	</select>
+
+</mapper>
